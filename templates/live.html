@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% extends 'base.html' %}
+    {% block app_content %}
+        <a class="btn btn-warning home" href="{{ url_for('index') }}">На главную</a>
+        <a class="btn btn-info refresh" href="{{ url_for('live') }}">Создать новую жизнь</a>
+
+        {% set count = namespace(a=0) %}
+        {% for i in range((game.world)|length) %}
+            {% for j in range((game.world[i])|length) %}
+                {% if game.world[i][j] == 1 %}
+                    {% set count.a = count.a + 1 %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        {% if count.a > 0 %}
+            <table class="world">
+                {% for i in range((game.world)|length) %}
+                    <tr>
+                        {% for j in range((game.world[i])|length) %}
+                            {% if game.world[i][j] == 1 %}
+                                <td class="cell living-cell"></td>
+                            {% elif game.world[i][j] == 0 and game.old_world[i][j] == 1 %}
+                                <td class="cell dead-cell"></td>
+                            {% else %}
+                                <td class="cell"></td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <h1>Game Over!</h1>
+            <script>event.preventDefault();</script>
+        {% endif %}
+    {% endblock %}
+    {% block scripts %}
+        {{ super() }}
+        <script>setInterval(()=> window.location.reload(), 1000);</script>
+        <div class="counter">{{ game.counter }}</div>
+    {% endblock %}
+</body>
+</html>
